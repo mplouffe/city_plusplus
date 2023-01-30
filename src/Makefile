@@ -5,10 +5,10 @@ OBJS = sim.cpp
 CC = g++
 
 # INCLUDE_PATHS - specifies additional include paths
-INCLUDE_PATHS = -IE:\dev_lib\SDL2-2.26.2\i686-w64-mingw32\include\SDL2
+INCLUDE_PATHS = -IE:\dev_lib\SDL2-2.26.2\i686-w64-mingw32\include\SDL2 -IE:\dev_lib\SDL2_image-2.6.2\i686-w64-mingw32\include\SDL2
 
 # LIBRARY_PATHS - specifies additional library paths
-LIBRARY_PATHS = -LE:\dev_lib\SDL2-2.26.2\i686-w64-mingw32\lib
+LIBRARY_PATHS = -LE:\dev_lib\SDL2-2.26.2\i686-w64-mingw32\lib -LE:\dev_lib\SDL2_image-2.6.2\i686-w64-mingw32\lib
 
 # COMPILER_FLAGS - specifies the ad ditional compiltion options
 # -w = supresses all warnings
@@ -16,7 +16,7 @@ LIBRARY_PATHS = -LE:\dev_lib\SDL2-2.26.2\i686-w64-mingw32\lib
 COMPILER_FLAGS = -w -Wl,-subsystem,windows
 
 # LINKER_FLAGS - specifies the libraries we're linking against
-LINKER_FLAGS = -lmingw32 -lSDL2main -lSDL2
+LINKER_FLAGS = -lmingw32 -lSDL2main -lSDL2 -lSDL2_image
 
 # OBJ_NAME - specifies the name of the exe
 OBJ_NAME = citypp_sim
