@@ -3,4 +3,4 @@
 
 An urban population simulation system.
 
-Made with :blue-heart:
+Made with :blue_heart:
