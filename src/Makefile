@@ -21,10 +21,13 @@ LINKER_FLAGS = -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf
 # OBJ_NAME - specifies the name of the exe
 OBJ_NAME = citypp_sim
 
+# EXE_NAME - name of the output exe
+EXE_NAME = citypp_sim
+
 # PROG_PATH - path of folder for output of executable
 PROG_PATH = ../bin/
 
 # This is the target that compiles the executable
-all : $(OBJS)
+all: $(OBJS)
 	$(CC) $(OBJS) $(INCLUDE_PATHS) $(LIBRARY_PATHS) $(COMPILER_FLAGS) $(LINKER_FLAGS) -o $(OBJ_NAME)
-	mv $(OBJ_NAME) $(PROG_PATH)
+	mv $(EXE_NAME) $(PROG_PATH)

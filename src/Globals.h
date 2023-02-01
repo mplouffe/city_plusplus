@@ -1,7 +1,7 @@
-#pragma once
+#ifndef GLOBALS_H
+#define GLOBALS_H
 
-#include <SDL.h>
-#include <SDL_image.h>
+#include "LTexture.h"
 
 const int SCREEN_WIDTH = 1024;
 const int SCREEN_HEIGHT = 768;
@@ -20,5 +20,8 @@ enum KeyPressSurfaces
 // (using globals while learning and doing tutorials)
 SDL_Window* gWindow = NULL;
 SDL_Renderer* gRenderer = NULL;
-SDL_Texture* gCurrentTexture = NULL;
-SDL_Texture* gKeyPressTextures[KEY_PRESS_SURFACE_TOTAL];
+LTexture* gCurrentTexture = NULL;
+LTexture* gPlaneTexture = NULL;
+LTexture* gKeyPressTextures[KEY_PRESS_SURFACE_TOTAL];
+
+#endif

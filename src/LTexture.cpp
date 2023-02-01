@@ -1,8 +1,8 @@
 #include <SDL_image.h>
 #include <stdio.h>
 
-#include "LTexture.h"
 #include "Globals.h"
+#include "LTexture.h"
 
 LTexture::LTexture()
 {
