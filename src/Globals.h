@@ -22,6 +22,7 @@ SDL_Window* gWindow = NULL;
 SDL_Renderer* gRenderer = NULL;
 LTexture gCurrentTexture;
 LTexture gPlaneTexture;
+LTexture gRobotTexture;
 LTexture gKeyPressTextures[KEY_PRESS_SURFACE_TOTAL];
 
 #endif

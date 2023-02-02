@@ -104,6 +104,12 @@ bool loadMedia()
 		success = false;
 	}
 
+	if (!gRobotTexture.loadFromFile("../img/robot.png", gRenderer))
+	{
+		printf("FAiled to load ROBOT image.\n");
+		success = false;
+	}
+
 	return success;
 }
 
@@ -133,13 +139,13 @@ int main( int argc, char* args[] )
 	if(!init())
 	{
 		printf("Failed to initialize.\n");
-		// return 0;
+		return 0;
 	}
 
 	if(!loadMedia())
 	{
 		printf( "Failed to load media.\n");
-		// return -5;
+		return 0;
 	}
 
 	// Keep window open until quit
@@ -147,6 +153,10 @@ int main( int argc, char* args[] )
 	bool quit = false;
 	int planeXPosition = -gPlaneTexture.getWidth();
 	int planePositionUpdaterCounter = 0;
+
+	SDL_Rect robotSpriteOffset = {0, 0, 24, 32};
+	int robotFrameCounter = 0;
+	int robotFrame = 0;
 
 	gCurrentTexture = gKeyPressTextures[KEY_PRESS_SURFACE_DEFAULT];
 	
@@ -186,8 +196,9 @@ int main( int argc, char* args[] )
 		SDL_RenderClear(gRenderer);
 
 		// Render texture to screen
-		gCurrentTexture.render(0, 0, gRenderer);
-		gPlaneTexture.render(planeXPosition, 50, gRenderer);
+		gCurrentTexture.render(0, 0);
+		gPlaneTexture.render(planeXPosition, 50);
+		gRobotTexture.render(SCREEN_WIDTH - (robotSpriteOffset.w * 2), SCREEN_HEIGHT - (robotSpriteOffset.h * 2), &robotSpriteOffset);
 
 		planePositionUpdaterCounter++;
 		if (planePositionUpdaterCounter > 20)
@@ -198,6 +209,18 @@ int main( int argc, char* args[] )
 				planeXPosition = -gPlaneTexture.getWidth();
 			}
 			planePositionUpdaterCounter = 0;
+		}
+
+		robotFrameCounter++;
+		if (robotFrameCounter > 1000)
+		{
+			robotFrame++;
+			if (robotFrame > 3)
+			{
+				robotFrame = 0;
+			}
+			robotSpriteOffset.x = robotFrame * 24;
+			robotFrameCounter = 0;
 		}
 
 		// Update Screen
