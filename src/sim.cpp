@@ -3,124 +3,8 @@
 #include <stdio.h>
 #include <string>
 
-class LTexture
-{
-    public:
-        LTexture();
-        ~LTexture();
-        bool loadFromFile(std::string path);
-        void free();
-        void render(int x, int y);
-        int getWidth();
-        int getHeight();
-    private:
-        SDL_Texture* mTexture;
-        int mWidth;
-        int mHeight;
-};
-
-const int SCREEN_WIDTH = 1024;
-const int SCREEN_HEIGHT = 768;
-
-enum KeyPressSurfaces
-{
-	KEY_PRESS_SURFACE_DEFAULT,
-	KEY_PRESS_SURFACE_UP,
-	KEY_PRESS_SURFACE_DOWN,
-	KEY_PRESS_SURFACE_LEFT,
-	KEY_PRESS_SURFACE_RIGHT,
-	KEY_PRESS_SURFACE_TOTAL
-};
-
-// Globals
-// (using globals while learning and doing tutorials)
-SDL_Window* gWindow = NULL;
-SDL_Renderer* gRenderer = NULL;
-LTexture gCurrentTexture;
-LTexture gPlaneTexture;
-LTexture gKeyPressTextures[KEY_PRESS_SURFACE_TOTAL];
-
-LTexture::LTexture()
-{
-    // Initialize
-    mTexture = NULL;
-    mWidth = 0;
-    mHeight = 0;
-}
-
-LTexture::~LTexture()
-{
-    // Deallocate
-    free();
-}
-
-bool LTexture::loadFromFile(std::string path)
-{
-    // get rid of pre-existing texture
-    free();
-
-    // the final texture
-    SDL_Texture* newTexture = NULL;
-
-    SDL_Surface* loadedSurface = IMG_Load(path.c_str());
-    if (loadedSurface == NULL)
-    {
-        printf("Unable to load image %s! SDL_image Error: %s\n", path.c_str(), IMG_GetError());
-    }
-    else
-    {
-        // color key image
-        SDL_SetColorKey(loadedSurface, SDL_TRUE, SDL_MapRGB(loadedSurface->format, 0, 0xFF, 0xFF));
-
-        // create texture from surface pixels
-        newTexture = SDL_CreateTextureFromSurface(gRenderer, loadedSurface);
-        if (newTexture == NULL)
-        {
-            printf("Unable to create texture from %s! SDL Error: %s\n", path.c_str(), SDL_GetError());
-        }
-        else
-        {
-            // get image dimensions
-            mWidth = loadedSurface->w;
-            mHeight = loadedSurface->h;
-        }
-
-        SDL_FreeSurface(loadedSurface);
-    }
-
-    // return sucess
-    mTexture = newTexture;
-    return mTexture != NULL;
-}
-
-void LTexture::free()
-{
-    // free texture if it exists
-    if (mTexture != NULL)
-    {
-        SDL_DestroyTexture(mTexture);
-        mTexture = NULL;
-        mWidth = 0;
-        mHeight = 0;
-    }
-}
-
-void LTexture::render(int x, int y)
-{
-    // set rendering pspace and render to screen
-    SDL_Rect renderQuad = {x, y, mWidth, mHeight};
-    SDL_RenderCopy(gRenderer, mTexture, NULL, &renderQuad);
-}
-
-int LTexture::getWidth()
-{
-    return mWidth;
-}
-
-int LTexture::getHeight()
-{
-    return mHeight;
-}
+#include "Globals.h"
+#include "LTexture.h"
 
 // Declarations
 bool init();									// starts up SDL and creates window
@@ -180,41 +64,41 @@ bool loadMedia()
 	bool success = true;
 
 	// Load default surface
-	if (!gKeyPressTextures[KEY_PRESS_SURFACE_DEFAULT].loadFromFile("../img/city.png"))
+	if (!gKeyPressTextures[KEY_PRESS_SURFACE_DEFAULT].loadFromFile("../img/city.png", gRenderer))
 	{
 		printf("Failed to load DEFAULT image.\n");
 		success = false;
 	}
 
 	// Load Up surface
-	if (!gKeyPressTextures[KEY_PRESS_SURFACE_UP].loadFromFile("../img/sky.png"))
+	if (!gKeyPressTextures[KEY_PRESS_SURFACE_UP].loadFromFile("../img/sky.png", gRenderer))
 	{
 		printf("Failed to load UP image.\n");
 		success = false;
 	}
 
 	// Load DOWN surface
-	if (!gKeyPressTextures[KEY_PRESS_SURFACE_DOWN].loadFromFile("../img/infrastructure.png"))
+	if (!gKeyPressTextures[KEY_PRESS_SURFACE_DOWN].loadFromFile("../img/infrastructure.png", gRenderer))
 	{
 		printf("Failed to load DOWN image.\n");
 		success = false;
 	}
 
 	// Load LEFT surface
-	if (!gKeyPressTextures[KEY_PRESS_SURFACE_LEFT].loadFromFile("../img/industrial.png"))
+	if (!gKeyPressTextures[KEY_PRESS_SURFACE_LEFT].loadFromFile("../img/industrial.png", gRenderer))
 	{
 		printf("Failed to load LEFT image.\n");
 		success = false;
 	}
 
 	// Load RIGHT surface
-	if (!gKeyPressTextures[KEY_PRESS_SURFACE_RIGHT].loadFromFile("../img/residental.png"))
+	if (!gKeyPressTextures[KEY_PRESS_SURFACE_RIGHT].loadFromFile("../img/residental.png", gRenderer))
 	{
 		printf("Failed to load RIGHT image.\n");
 		success = false;
 	}
 
-	if (!gPlaneTexture.loadFromFile("../img/plane.png"))
+	if (!gPlaneTexture.loadFromFile("../img/plane.png", gRenderer))
 	{
 		printf("Failed to load PLANE image.\n");
 		success = false;
@@ -302,8 +186,8 @@ int main( int argc, char* args[] )
 		SDL_RenderClear(gRenderer);
 
 		// Render texture to screen
-		gCurrentTexture.render(0, 0);
-		gPlaneTexture.render(planeXPosition, 50);
+		gCurrentTexture.render(0, 0, gRenderer);
+		gPlaneTexture.render(planeXPosition, 50, gRenderer);
 
 		planePositionUpdaterCounter++;
 		if (planePositionUpdaterCounter > 20)

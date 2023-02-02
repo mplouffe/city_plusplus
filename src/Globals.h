@@ -20,8 +20,8 @@ enum KeyPressSurfaces
 // (using globals while learning and doing tutorials)
 SDL_Window* gWindow = NULL;
 SDL_Renderer* gRenderer = NULL;
-LTexture* gCurrentTexture = NULL;
-LTexture* gPlaneTexture = NULL;
-LTexture* gKeyPressTextures[KEY_PRESS_SURFACE_TOTAL];
+LTexture gCurrentTexture;
+LTexture gPlaneTexture;
+LTexture gKeyPressTextures[KEY_PRESS_SURFACE_TOTAL];
 
 #endif

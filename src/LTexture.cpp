@@ -1,7 +1,6 @@
 #include <SDL_image.h>
 #include <stdio.h>
 
-#include "Globals.h"
 #include "LTexture.h"
 
 LTexture::LTexture()
@@ -18,7 +17,7 @@ LTexture::~LTexture()
     free();
 }
 
-bool LTexture::loadFromFile(std::string path)
+bool LTexture::loadFromFile(std::string path, SDL_Renderer* renderer)
 {
     // get rid of pre-existing texture
     free();
@@ -37,7 +36,7 @@ bool LTexture::loadFromFile(std::string path)
         SDL_SetColorKey(loadedSurface, SDL_TRUE, SDL_MapRGB(loadedSurface->format, 0, 0xFF, 0xFF));
 
         // create texture from surface pixels
-        newTexture = SDL_CreateTextureFromSurface(gRenderer, loadedSurface);
+        newTexture = SDL_CreateTextureFromSurface(renderer, loadedSurface);
         if (newTexture == NULL)
         {
             printf("Unable to create texture from %s! SDL Error: %s\n", path.c_str(), SDL_GetError());
@@ -69,11 +68,11 @@ void LTexture::free()
     }
 }
 
-void LTexture::render(int x, int y)
+void LTexture::render(int x, int y, SDL_Renderer* renderer)
 {
     // set rendering pspace and render to screen
     SDL_Rect renderQuad = {x, y, mWidth, mHeight};
-    SDL_RenderCopy(gRenderer, mTexture, NULL, &renderQuad);
+    SDL_RenderCopy(renderer, mTexture, NULL, &renderQuad);
 }
 
 int LTexture::getWidth()
