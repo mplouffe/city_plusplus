@@ -69,6 +69,16 @@ void LTexture::free()
     }
 }
 
+void LTexture::setAlpha(Uint8 newAlpha)
+{
+    SDL_SetTextureAlphaMod(mTexture, newAlpha);
+}
+
+void LTexture::setBlendMode(SDL_BlendMode blending)
+{
+    SDL_SetTextureBlendMode(mTexture, blending);
+}
+
 void LTexture::render(int x, int y, SDL_Rect* clip)
 {
     // set rendering pspace and render to screen

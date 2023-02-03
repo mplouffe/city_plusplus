@@ -5,11 +5,12 @@
 
 #include "Globals.h"
 #include "LTexture.h"
+#include "Background.h"
 
 // Declarations
 bool init();									// starts up SDL and creates window
-bool loadMedia();								// load media
 void close();									// frees media and shuts down SDL
+bool loadMedia();
 
 // Defintions
 bool init()
@@ -55,6 +56,8 @@ bool init()
 			}
 		}
 	}
+
+	success = gBackground.init(gRenderer);
 	return success;
 }
 
@@ -62,41 +65,6 @@ bool loadMedia()
 {
 	// Loading success flag
 	bool success = true;
-
-	// Load default surface
-	if (!gKeyPressTextures[KEY_PRESS_SURFACE_DEFAULT].loadFromFile("../img/city.png", gRenderer))
-	{
-		printf("Failed to load DEFAULT image.\n");
-		success = false;
-	}
-
-	// Load Up surface
-	if (!gKeyPressTextures[KEY_PRESS_SURFACE_UP].loadFromFile("../img/sky.png", gRenderer))
-	{
-		printf("Failed to load UP image.\n");
-		success = false;
-	}
-
-	// Load DOWN surface
-	if (!gKeyPressTextures[KEY_PRESS_SURFACE_DOWN].loadFromFile("../img/infrastructure.png", gRenderer))
-	{
-		printf("Failed to load DOWN image.\n");
-		success = false;
-	}
-
-	// Load LEFT surface
-	if (!gKeyPressTextures[KEY_PRESS_SURFACE_LEFT].loadFromFile("../img/industrial.png", gRenderer))
-	{
-		printf("Failed to load LEFT image.\n");
-		success = false;
-	}
-
-	// Load RIGHT surface
-	if (!gKeyPressTextures[KEY_PRESS_SURFACE_RIGHT].loadFromFile("../img/residental.png", gRenderer))
-	{
-		printf("Failed to load RIGHT image.\n");
-		success = false;
-	}
 
 	if (!gPlaneTexture.loadFromFile("../img/plane.png", gRenderer))
 	{
@@ -115,12 +83,7 @@ bool loadMedia()
 
 void close()
 {
-	// Deallocate surface
-	for (int i = 0; i < KEY_PRESS_SURFACE_TOTAL; i++)
-	{
-		gKeyPressTextures[i].free();
-	}
-
+	gBackground.close();
 	// Destroy window
 	SDL_DestroyRenderer(gRenderer);
 	SDL_DestroyWindow(gWindow);
@@ -144,7 +107,7 @@ int main( int argc, char* args[] )
 
 	if(!loadMedia())
 	{
-		printf( "Failed to load media.\n");
+		printf("Failed to load sprites.\n");
 		return 0;
 	}
 
@@ -158,7 +121,7 @@ int main( int argc, char* args[] )
 	int robotFrameCounter = 0;
 	int robotFrame = 0;
 
-	gCurrentTexture = gKeyPressTextures[KEY_PRESS_SURFACE_DEFAULT];
+	gBackground.setBackground(KeyPressSurfaces::KEY_PRESS_SURFACE_DEFAULT);
 	
 	while(!quit)
 	{ 
@@ -173,19 +136,19 @@ int main( int argc, char* args[] )
 				switch(e.key.keysym.sym)
 				{
 					case SDLK_UP:
-						gCurrentTexture = gKeyPressTextures[KEY_PRESS_SURFACE_UP];
+						gBackground.setBackground(KeyPressSurfaces::KEY_PRESS_SURFACE_UP);
 						break;
 					case SDLK_DOWN:
-						gCurrentTexture = gKeyPressTextures[KEY_PRESS_SURFACE_DOWN];
+						gBackground.setBackground(KeyPressSurfaces::KEY_PRESS_SURFACE_DOWN);
 						break;
 					case SDLK_LEFT:
-						gCurrentTexture = gKeyPressTextures[KEY_PRESS_SURFACE_LEFT];
+						gBackground.setBackground(KeyPressSurfaces::KEY_PRESS_SURFACE_LEFT);
 						break;
 					case SDLK_RIGHT:
-						gCurrentTexture = gKeyPressTextures[KEY_PRESS_SURFACE_RIGHT];
+						gBackground.setBackground(KeyPressSurfaces::KEY_PRESS_SURFACE_RIGHT);
 						break;
 					case SDLK_HOME:
-						gCurrentTexture = gKeyPressTextures[KEY_PRESS_SURFACE_DEFAULT];
+						gBackground.setBackground(KeyPressSurfaces::KEY_PRESS_SURFACE_DEFAULT);
 						break;
 				}
 			}
@@ -196,7 +159,7 @@ int main( int argc, char* args[] )
 		SDL_RenderClear(gRenderer);
 
 		// Render texture to screen
-		gCurrentTexture.render(0, 0);
+		gBackground.render(gRenderer);
 		gPlaneTexture.render(planeXPosition, 50);
 		gRobotTexture.render(SCREEN_WIDTH - (robotSpriteOffset.w * 2), SCREEN_HEIGHT - (robotSpriteOffset.h * 2), &robotSpriteOffset);
 

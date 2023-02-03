@@ -12,6 +12,8 @@ class LTexture
         bool loadFromFile(std::string path, SDL_Renderer* renderer);
         void free();
         void render(int x, int y, SDL_Rect* clip = NULL);
+        void setAlpha(Uint8 newAlpha);
+        void setBlendMode(SDL_BlendMode blending);
         int getWidth();
         int getHeight();
     private:
