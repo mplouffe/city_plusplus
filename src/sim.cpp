@@ -34,7 +34,7 @@ bool init()
 		else
 		{
 			// Create renderer for window
-			gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
+			gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
 			if (gRenderer == NULL)
 			{
@@ -167,7 +167,7 @@ int main( int argc, char* args[] )
 		gRobotTexture.render(SCREEN_WIDTH - (robotSpriteOffset.w * 2), SCREEN_HEIGHT - (robotSpriteOffset.h * 2), &robotSpriteOffset);
 
 		planePositionUpdaterCounter++;
-		if (planePositionUpdaterCounter > 20)
+		if (planePositionUpdaterCounter > 2)
 		{
 			planeXPosition++;
 			if (planeXPosition > SCREEN_WIDTH)
@@ -178,7 +178,7 @@ int main( int argc, char* args[] )
 		}
 
 		robotFrameCounter++;
-		if (robotFrameCounter > 1000)
+		if (robotFrameCounter > 20)
 		{
 			robotFrame++;
 			if (robotFrame > 3)

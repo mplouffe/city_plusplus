@@ -21,7 +21,7 @@ public:
     bool init(SDL_Renderer* aRenderer);
     void close();
     void setBackground(KeyPressSurfaces currentBackground);
-    void triggerCrossFade(KeyPressSurfaces newBackground, int fadeDuration = 2000);
+    void triggerCrossFade(KeyPressSurfaces newBackground, int fadeDuration = 40);
     void update();
     void render(SDL_Renderer* aRenderer);
 
