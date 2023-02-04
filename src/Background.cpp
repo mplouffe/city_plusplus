@@ -68,12 +68,42 @@ void Background::setBackground(KeyPressSurfaces newBackground)
     mCurrentBackground = mKeyPressTextures[newBackground];
 }
 
+void Background::triggerCrossFade(KeyPressSurfaces newBackground, int fadeDuration)
+{
+	mTargetFadeDuration = fadeDuration;
+	mTransitioningBackground = mCurrentBackground;
+	mTransitioningBackground->setBlendMode(SDL_BLENDMODE_BLEND);
+	mCurrentBackground = mKeyPressTextures[newBackground];
+	mIsCrossFading = true;
+	mCurrentFadeDuration = 0;
+}
+
 void Background::render(SDL_Renderer* aRenderer)
 {
     mCurrentBackground->render(0, 0);
+	if(mIsCrossFading)
+	{
+		mTransitioningBackground->render(0, 0);
+	}
 }
 
 void Background::update()
 {
-
+	if (mIsCrossFading)
+	{
+		mCurrentFadeDuration++;
+		if (mCurrentFadeDuration >= mTargetFadeDuration)
+		{
+			mIsCrossFading = false;
+			mTransitioningBackground->setAlpha(255);
+			mTransitioningBackground->setBlendMode(SDL_BLENDMODE_NONE);
+			mTransitioningBackground = NULL;
+		}
+		else
+		{
+			float percentComplete = (float)mCurrentFadeDuration/(float)mTargetFadeDuration;
+			int currentFadeAlpha = (1 - percentComplete) * 255;
+			mTransitioningBackground->setAlpha(currentFadeAlpha);
+		}
+	}
 }

@@ -21,6 +21,7 @@ public:
     bool init(SDL_Renderer* aRenderer);
     void close();
     void setBackground(KeyPressSurfaces currentBackground);
+    void triggerCrossFade(KeyPressSurfaces newBackground, int fadeDuration = 2000);
     void update();
     void render(SDL_Renderer* aRenderer);
 
@@ -28,5 +29,8 @@ private:
     LTexture* mCurrentBackground;
     LTexture* mTransitioningBackground;
     LTexture* mKeyPressTextures[KEY_PRESS_SURFACE_TOTAL];
+    bool mIsCrossFading;
+    int mCurrentFadeDuration;
+    int mTargetFadeDuration;
 };
 #endif

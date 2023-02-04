@@ -136,23 +136,26 @@ int main( int argc, char* args[] )
 				switch(e.key.keysym.sym)
 				{
 					case SDLK_UP:
-						gBackground.setBackground(KeyPressSurfaces::KEY_PRESS_SURFACE_UP);
+						gBackground.triggerCrossFade(KeyPressSurfaces::KEY_PRESS_SURFACE_UP);
 						break;
 					case SDLK_DOWN:
-						gBackground.setBackground(KeyPressSurfaces::KEY_PRESS_SURFACE_DOWN);
+						gBackground.triggerCrossFade(KeyPressSurfaces::KEY_PRESS_SURFACE_DOWN);
 						break;
 					case SDLK_LEFT:
-						gBackground.setBackground(KeyPressSurfaces::KEY_PRESS_SURFACE_LEFT);
+						gBackground.triggerCrossFade(KeyPressSurfaces::KEY_PRESS_SURFACE_LEFT);
 						break;
 					case SDLK_RIGHT:
-						gBackground.setBackground(KeyPressSurfaces::KEY_PRESS_SURFACE_RIGHT);
+						gBackground.triggerCrossFade(KeyPressSurfaces::KEY_PRESS_SURFACE_RIGHT);
 						break;
 					case SDLK_HOME:
-						gBackground.setBackground(KeyPressSurfaces::KEY_PRESS_SURFACE_DEFAULT);
+						gBackground.triggerCrossFade(KeyPressSurfaces::KEY_PRESS_SURFACE_DEFAULT);
 						break;
 				}
 			}
 		}
+
+		// update
+		gBackground.update();
 
 		// Clear Screen
 		SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
