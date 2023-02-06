@@ -1,7 +1,9 @@
 #include <SDL.h>
 #include <SDL_image.h>
+#include <SDL_ttf.h>
 #include <stdio.h>
 #include <string>
+#include <cmath>
 
 #include "Globals.h"
 #include "LTexture.h"
@@ -20,7 +22,7 @@ bool init()
 
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
-		printf( "SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
+		SDL_Log( "SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
 		success = false;
 	}
 	else
@@ -28,7 +30,7 @@ bool init()
 		gWindow = SDL_CreateWindow("City++: Simulation", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
 		if (gWindow == NULL)
 		{
-			printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
+			SDL_Log("Window could not be created! SDL_Error: %s\n", SDL_GetError());
 			success = false;
 		}
 		else
@@ -38,7 +40,7 @@ bool init()
 
 			if (gRenderer == NULL)
 			{
-				printf("Renderer could not be created! SDL Error: %s\n", SDL_GetError());
+				SDL_Log("Renderer could not be created! SDL Error: %s\n", SDL_GetError());
 				success = false;
 			}
 			else
@@ -50,7 +52,14 @@ bool init()
 				int imgFlags = IMG_INIT_PNG;
 				if (!(IMG_Init(imgFlags) & imgFlags))
 				{
-					printf("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
+					SDL_Log("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
+					success = false;
+				}
+
+				// Initalize SDL_ttf
+				if(TTF_Init() == -1)
+				{
+					SDL_Log("SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError());
 					success = false;
 				}
 			}
@@ -66,16 +75,43 @@ bool loadMedia()
 	// Loading success flag
 	bool success = true;
 
-	if (!gPlaneTexture.loadFromFile("../img/plane.png", gRenderer))
+	// Load plane sprite
+	if (!gPlaneTexture.loadFromFile("../assets/img/plane.png", gRenderer))
 	{
-		printf("Failed to load PLANE image.\n");
+		SDL_Log("Failed to load PLANE image.\n");
 		success = false;
 	}
 
-	if (!gRobotTexture.loadFromFile("../img/robot.png", gRenderer))
+	// Load robot sprite sheet
+	if (!gRobotTexture.loadFromFile("../assets/img/robot.png", gRenderer))
 	{
-		printf("FAiled to load ROBOT image.\n");
+		SDL_Log("Failed to load ROBOT image.\n");
 		success = false;
+	}
+
+	// Load Title Font
+	gFont = TTF_OpenFont("../assets/fonts/computer_pixel-7.ttf", 72);
+	if (gFont == NULL)
+	{
+		SDL_Log("Failed to load FONT. SDL_ttf Error: %s\n", TTF_GetError());
+		success = false;
+	}
+	else
+	{
+		// Render text
+		SDL_Color textColor = {0xFF, 0xFF, 0xFF, 0xFF};
+		SDL_Color shadowColor = {0x00, 0x00, 0x00, 0xFF};
+		if (!gTextTexture.loadFromRenderedText("City++: An Urban Simulator", textColor, gRenderer, gFont))
+		{
+			SDL_Log("Failed to render text texture!\n");
+			success = false;
+		}
+
+		if (!gTextShadow.loadFromRenderedText("City++: An Urban Simulator", shadowColor, gRenderer, gFont))
+		{
+			SDL_Log("Failed to render text texture!\n");
+			success = false;
+		}
 	}
 
 	return success;
@@ -84,6 +120,14 @@ bool loadMedia()
 void close()
 {
 	gBackground.close();
+
+	gPlaneTexture.free();
+	gRobotTexture.free();
+	gTextTexture.free();
+	
+	TTF_CloseFont(gFont);
+	gFont = NULL;
+
 	// Destroy window
 	SDL_DestroyRenderer(gRenderer);
 	SDL_DestroyWindow(gWindow);
@@ -92,6 +136,7 @@ void close()
 	gRenderer = NULL;
 
 	// Quit SDL subsystems
+	TTF_Quit();
 	IMG_Quit();
 	SDL_Quit();
 }
@@ -101,13 +146,13 @@ int main( int argc, char* args[] )
 	//Initialize SDL
 	if(!init())
 	{
-		printf("Failed to initialize.\n");
+		SDL_Log("Failed to initialize.\n");
 		return 0;
 	}
 
 	if(!loadMedia())
 	{
-		printf("Failed to load sprites.\n");
+		SDL_Log("Failed to load sprites.\n");
 		return 0;
 	}
 
@@ -116,6 +161,9 @@ int main( int argc, char* args[] )
 	bool quit = false;
 	int planeXPosition = -gPlaneTexture.getWidth();
 	int planePositionUpdaterCounter = 0;
+
+	int textX = 20;
+	int textY = 20;
 
 	SDL_Rect robotSpriteOffset = {0, 0, 24, 32};
 	int robotFrameCounter = 0;
@@ -162,9 +210,11 @@ int main( int argc, char* args[] )
 		SDL_RenderClear(gRenderer);
 
 		// Render texture to screen
-		gBackground.render(gRenderer);
+		gBackground.render();
 		gPlaneTexture.render(planeXPosition, 50);
 		gRobotTexture.render(SCREEN_WIDTH - (robotSpriteOffset.w * 2), SCREEN_HEIGHT - (robotSpriteOffset.h * 2), &robotSpriteOffset);
+		gTextShadow.render(textX + 4, textY + 4);
+		gTextTexture.render(textX, textY);
 
 		planePositionUpdaterCounter++;
 		if (planePositionUpdaterCounter > 2)
@@ -194,6 +244,5 @@ int main( int argc, char* args[] )
 	}
 	
 	close();
-
 	return 0;
 }

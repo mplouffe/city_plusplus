@@ -23,7 +23,7 @@ public:
     void setBackground(KeyPressSurfaces currentBackground);
     void triggerCrossFade(KeyPressSurfaces newBackground, int fadeDuration = 40);
     void update();
-    void render(SDL_Renderer* aRenderer);
+    void render();
 
 private:
     LTexture* mCurrentBackground;

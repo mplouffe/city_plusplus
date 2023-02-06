@@ -1,4 +1,5 @@
 #include <SDL_image.h>
+#include<SDL_ttf.h>
 #include <stdio.h>
 
 #include "LTexture.h"
@@ -28,7 +29,7 @@ bool LTexture::loadFromFile(std::string path, SDL_Renderer* renderer)
     SDL_Surface* loadedSurface = IMG_Load(path.c_str());
     if (loadedSurface == NULL)
     {
-        printf("Unable to load image %s! SDL_image Error: %s\n", path.c_str(), IMG_GetError());
+        SDL_Log("Unable to load image %s! SDL_image Error: %s\n", path.c_str(), IMG_GetError());
     }
     else
     {
@@ -39,7 +40,7 @@ bool LTexture::loadFromFile(std::string path, SDL_Renderer* renderer)
         newTexture = SDL_CreateTextureFromSurface(renderer, loadedSurface);
         if (newTexture == NULL)
         {
-            printf("Unable to create texture from %s! SDL Error: %s\n", path.c_str(), SDL_GetError());
+            SDL_Log("Unable to create texture from %s! SDL Error: %s\n", path.c_str(), SDL_GetError());
         }
         else
         {
@@ -54,6 +55,40 @@ bool LTexture::loadFromFile(std::string path, SDL_Renderer* renderer)
     // return sucess
     mTexture = newTexture;
     mRenderer = renderer;
+    return mTexture != NULL;
+}
+
+bool LTexture::loadFromRenderedText(std::string aTextureText, SDL_Color aTextColor, SDL_Renderer* aRenderer, TTF_Font* aFont)
+{
+    // Get rid of preexisting texture
+    free();
+
+    // Render text surface
+    SDL_Surface* textSurface = TTF_RenderText_Solid(aFont, aTextureText.c_str(), aTextColor);
+    if (textSurface == NULL)
+    {
+        SDL_Log("Unable to render text surface! SDL_ttf Error: %s\n", TTF_GetError());
+    }
+    else
+    {
+        // Create texture from surface pixels
+        mTexture = SDL_CreateTextureFromSurface(aRenderer, textSurface);
+        if (mTexture == NULL)
+        {
+            SDL_Log("Unable to create texture from rendered text! SDL Error: %s\n", SDL_GetError());
+        }
+        else
+        {
+            // Get image dimensions
+            mWidth = textSurface->w;
+            mHeight = textSurface->h;
+        }
+
+        // Get rid of old surface
+        SDL_FreeSurface(textSurface);
+    }
+
+    mRenderer = aRenderer;
     return mTexture != NULL;
 }
 

@@ -11,11 +11,14 @@ const int SCREEN_HEIGHT = 768;
 // (using globals while learning and doing tutorials)
 SDL_Window* gWindow = NULL;
 SDL_Renderer* gRenderer = NULL;
+TTF_Font* gFont = NULL;
 Background gBackground;
 LTexture gCurrentTexture;
 LTexture gSwappingTexture;
 LTexture gPlaneTexture;
 LTexture gRobotTexture;
+LTexture gTextTexture;
+LTexture gTextShadow;
 
 
 #endif

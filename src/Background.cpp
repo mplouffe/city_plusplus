@@ -26,37 +26,37 @@ bool Background::init(SDL_Renderer* aRenderer)
 	bool success = true;
 
 	// Load default surface
-	if (!mKeyPressTextures[KEY_PRESS_SURFACE_DEFAULT]->loadFromFile("../img/city.png", aRenderer))
+	if (!mKeyPressTextures[KEY_PRESS_SURFACE_DEFAULT]->loadFromFile("../assets/img/city.png", aRenderer))
 	{
-		printf("Failed to load DEFAULT image.\n");
+		SDL_Log("Failed to load DEFAULT image.\n");
 		success = false;
 	}
 
 	// Load Up surface
-	if (!mKeyPressTextures[KEY_PRESS_SURFACE_UP]->loadFromFile("../img/sky.png", aRenderer))
+	if (!mKeyPressTextures[KEY_PRESS_SURFACE_UP]->loadFromFile("../assets/img/sky.png", aRenderer))
 	{
-		printf("Failed to load UP image.\n");
+		SDL_Log("Failed to load UP image.\n");
 		success = false;
 	}
 
 	// Load DOWN surface
-	if (!mKeyPressTextures[KEY_PRESS_SURFACE_DOWN]->loadFromFile("../img/infrastructure.png", aRenderer))
+	if (!mKeyPressTextures[KEY_PRESS_SURFACE_DOWN]->loadFromFile("../assets/img/infrastructure.png", aRenderer))
 	{
-		printf("Failed to load DOWN image.\n");
+		SDL_Log("Failed to load DOWN image.\n");
 		success = false;
 	}
 
 	// Load LEFT surface
-	if (!mKeyPressTextures[KEY_PRESS_SURFACE_LEFT]->loadFromFile("../img/industrial.png", aRenderer))
+	if (!mKeyPressTextures[KEY_PRESS_SURFACE_LEFT]->loadFromFile("../assets/img/industrial.png", aRenderer))
 	{
-		printf("Failed to load LEFT image.\n");
+		SDL_Log("Failed to load LEFT image.\n");
 		success = false;
 	}
 
 	// Load RIGHT surface
-	if (!mKeyPressTextures[KEY_PRESS_SURFACE_RIGHT]->loadFromFile("../img/residental.png", aRenderer))
+	if (!mKeyPressTextures[KEY_PRESS_SURFACE_RIGHT]->loadFromFile("../assets/img/residental.png", aRenderer))
 	{
-		printf("Failed to load RIGHT image.\n");
+		SDL_Log("Failed to load RIGHT image.\n");
 		success = false;
 	}
 
@@ -78,7 +78,7 @@ void Background::triggerCrossFade(KeyPressSurfaces newBackground, int fadeDurati
 	mCurrentFadeDuration = 0;
 }
 
-void Background::render(SDL_Renderer* aRenderer)
+void Background::render()
 {
     mCurrentBackground->render(0, 0);
 	if(mIsCrossFading)
