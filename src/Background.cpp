@@ -70,12 +70,20 @@ void Background::setBackground(KeyPressSurfaces newBackground)
 
 void Background::triggerCrossFade(KeyPressSurfaces newBackground, int fadeDuration)
 {
-	mTargetFadeDuration = fadeDuration;
-	mTransitioningBackground = mCurrentBackground;
-	mTransitioningBackground->setBlendMode(SDL_BLENDMODE_BLEND);
-	mCurrentBackground = mKeyPressTextures[newBackground];
-	mIsCrossFading = true;
-	mCurrentFadeDuration = 0;
+	if (mCurrentBackground != mKeyPressTextures[newBackground])
+	{
+		if (mIsCrossFading)
+		{
+			mTransitioningBackground->setAlpha(255);
+			mTransitioningBackground->setBlendMode(SDL_BLENDMODE_NONE);
+		}
+		mTargetFadeDuration = fadeDuration;
+		mTransitioningBackground = mCurrentBackground;
+		mTransitioningBackground->setBlendMode(SDL_BLENDMODE_BLEND);
+		mCurrentBackground = mKeyPressTextures[newBackground];
+		mIsCrossFading = true;
+		mCurrentFadeDuration = 0;
+	}
 }
 
 void Background::render()

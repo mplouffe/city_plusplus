@@ -20,13 +20,34 @@ bool init()
 	// Initialzation flag
 	bool success = true;
 
-	if (SDL_Init(SDL_INIT_VIDEO) < 0)
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) < 0)
 	{
 		SDL_Log( "SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
 		success = false;
 	}
 	else
 	{
+		// set texture filtering to linear
+		if (!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1"))
+		{
+			SDL_Log("Warning: Linear texture filtering not enabled!");
+		}
+
+		// check for joysticks
+		if(SDL_NumJoysticks() < 1)
+		{
+			SDL_Log("Warning: No joysticks connected!\n");
+		}
+		else
+		{
+			// Load joystick
+			gGameController = SDL_JoystickOpen(0);
+			if(gGameController == NULL)
+			{
+				SDL_Log("Unable to open game controller! SDL_Error: %s\n", SDL_GetError());
+			}
+		}
+
 		gWindow = SDL_CreateWindow("City++: Simulation", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
 		if (gWindow == NULL)
 		{
@@ -128,6 +149,10 @@ void close()
 	TTF_CloseFont(gFont);
 	gFont = NULL;
 
+	// close game controller
+	SDL_JoystickClose(gGameController);
+	gGameController = NULL;
+
 	// Destroy window
 	SDL_DestroyRenderer(gRenderer);
 	SDL_DestroyWindow(gWindow);
@@ -159,9 +184,17 @@ int main( int argc, char* args[] )
 	// Keep window open until quit
 	SDL_Event e;
 	bool quit = false;
+	
 	int planeXPosition = -gPlaneTexture.getWidth();
+	int planeYPositionMin = 0;
+	int planeYPositionMax = SCREEN_HEIGHT - gPlaneTexture.getHeight();
+	int planeYPosition = 50;
 	int planePositionUpdaterCounter = 0;
 
+	// normalized direction
+	int xDir = 0;
+	int yDir = 0;
+		
 	int textX = 20;
 	int textY = 20;
 
@@ -178,6 +211,44 @@ int main( int argc, char* args[] )
 			if(e.type == SDL_QUIT)
 			{
 				quit = true;
+			}
+			else if (e.type == SDL_JOYAXISMOTION)
+			{
+				// motion on controller 0
+				if (e.jaxis.which == 0)
+				{
+					// x axis motion
+					if (e.jaxis.axis == 0)
+					{
+						if (e.jaxis.value < -JOYSTICK_DEAD_ZONE)
+						{
+							xDir = -1;		// left of dead zone
+						}
+						else if (e.jaxis.value > JOYSTICK_DEAD_ZONE)
+						{
+							xDir = 1;		// right of dead zone
+						}
+						else
+						{
+							xDir = 0;		// neutral
+						}
+					}
+					else if (e.jaxis.axis == 1)
+					{
+						if (e.jaxis.value < -JOYSTICK_DEAD_ZONE)
+						{
+							yDir = -1;		// below dead zone
+						}
+						else if (e.jaxis.value > JOYSTICK_DEAD_ZONE)
+						{
+							yDir = 1;		// above dead zone
+						}
+						else
+						{
+							yDir = 0;		// neutral
+						}
+					}
+				}
 			}
 			else if (e.type == SDL_KEYDOWN)
 			{
@@ -211,15 +282,26 @@ int main( int argc, char* args[] )
 
 		// Render texture to screen
 		gBackground.render();
-		gPlaneTexture.render(planeXPosition, 50);
+		gPlaneTexture.render(planeXPosition, planeYPosition);
 		gRobotTexture.render(SCREEN_WIDTH - (robotSpriteOffset.w * 2), SCREEN_HEIGHT - (robotSpriteOffset.h * 2), &robotSpriteOffset);
 		gTextShadow.render(textX + 4, textY + 4);
 		gTextTexture.render(textX, textY);
 
+		planeYPosition += yDir;
+		if (planeYPosition < planeYPositionMin)
+		{
+			planeYPosition = planeYPositionMin;
+		}
+		else if (planeYPosition > planeYPositionMax)
+		{
+			planeYPosition = planeYPositionMax;
+		}
+
 		planePositionUpdaterCounter++;
 		if (planePositionUpdaterCounter > 2)
 		{
-			planeXPosition++;
+			planeXPosition += 2;
+			planeXPosition += xDir;
 			if (planeXPosition > SCREEN_WIDTH)
 			{
 				planeXPosition = -gPlaneTexture.getWidth();
