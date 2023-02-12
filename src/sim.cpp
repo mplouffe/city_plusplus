@@ -79,6 +79,13 @@ bool init()
 					success = false;
 				}
 
+				// Initalize SDL_mixer
+				if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
+				{
+					SDL_Log("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
+					success = false;
+				}
+
 				// Initalize SDL_ttf
 				if(TTF_Init() == -1)
 				{
@@ -137,17 +144,31 @@ bool loadMedia()
 		}
 	}
 
+	// Load Audio
+	gSelect = Mix_LoadWAV("../assets/audio/Blip_Select.wav");
+	if (gSelect == NULL)
+	{
+		SDL_Log("Failed to load SELECT audio effect. SDL_mixer error: %s\n", Mix_GetError());
+		success = false;
+	}
+
 	return success;
 }
 
 void close()
 {
+	// close visual
 	gBackground.close();
 
 	gPlaneTexture.free();
 	gRobotTexture.free();
 	gTextTexture.free();
 	
+	// free audio
+	Mix_FreeChunk(gSelect);
+	gSelect = NULL;
+
+	// close text
 	TTF_CloseFont(gFont);
 	gFont = NULL;
 
@@ -164,6 +185,7 @@ void close()
 
 	// Quit SDL subsystems
 	TTF_Quit();
+	Mix_Quit();
 	IMG_Quit();
 	SDL_Quit();
 }
@@ -254,23 +276,34 @@ int main( int argc, char* args[] )
 			}
 			else if (e.type == SDL_KEYDOWN)
 			{
+				bool playSound = false;
 				switch(e.key.keysym.sym)
 				{
 					case SDLK_UP:
 						gBackground.triggerCrossFade(KeyPressSurfaces::KEY_PRESS_SURFACE_UP);
+						playSound = true;
 						break;
 					case SDLK_DOWN:
 						gBackground.triggerCrossFade(KeyPressSurfaces::KEY_PRESS_SURFACE_DOWN);
+						playSound = true;
 						break;
 					case SDLK_LEFT:
 						gBackground.triggerCrossFade(KeyPressSurfaces::KEY_PRESS_SURFACE_LEFT);
+						playSound = true;
 						break;
 					case SDLK_RIGHT:
 						gBackground.triggerCrossFade(KeyPressSurfaces::KEY_PRESS_SURFACE_RIGHT);
+						playSound = true;
 						break;
 					case SDLK_HOME:
 						gBackground.triggerCrossFade(KeyPressSurfaces::KEY_PRESS_SURFACE_DEFAULT);
+						playSound = true;
 						break;
+				}
+
+				if (playSound)
+				{
+					Mix_PlayChannel(-1, gSelect, 0);
 				}
 			}
 		}

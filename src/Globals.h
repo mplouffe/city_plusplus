@@ -19,11 +19,11 @@ SDL_Renderer* gRenderer = NULL;
 TTF_Font* gFont = NULL;
 LTexture gTextTexture;
 LTexture gTextShadow;
-// - Background
-Background gBackground;
 // - Sprites
 LTexture gPlaneTexture;
 LTexture gRobotTexture;
+// - Background
+Background gBackground;
 
 // Audio
 // - Music
