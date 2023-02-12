@@ -10,17 +10,29 @@ const int JOYSTICK_DEAD_ZONE = 8000;
 
 // Globals
 // (using globals while learning and doing tutorials)
+
+// Visual
+// - Rendering
 SDL_Window* gWindow = NULL;
 SDL_Renderer* gRenderer = NULL;
-SDL_Joystick* gGameController = NULL;
+// - Text
 TTF_Font* gFont = NULL;
-Background gBackground;
-LTexture gCurrentTexture;
-LTexture gSwappingTexture;
-LTexture gPlaneTexture;
-LTexture gRobotTexture;
 LTexture gTextTexture;
 LTexture gTextShadow;
+// - Background
+Background gBackground;
+// - Sprites
+LTexture gPlaneTexture;
+LTexture gRobotTexture;
+
+// Audio
+// - Music
+// Mix_Music *gMusic;
+// - SFX
+Mix_Chunk *gSelect;
+
+// Input
+SDL_Joystick* gGameController = NULL;
 
 
 #endif
