@@ -1,5 +1,5 @@
 # OBJS - specifies which files to compile as part of the project
-OBJS = sim.cpp LTexture.cpp Background.cpp
+OBJS = sim.cpp LTexture.cpp Background.cpp Timer.cpp
 
 # CC - specifies which compiler
 CC = g++

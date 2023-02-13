@@ -16,9 +16,11 @@ const int JOYSTICK_DEAD_ZONE = 8000;
 SDL_Window* gWindow = NULL;
 SDL_Renderer* gRenderer = NULL;
 // - Text
-TTF_Font* gFont = NULL;
+TTF_Font* gTitleFont = NULL;
+TTF_Font* gTimeFont = NULL;
 LTexture gTextTexture;
 LTexture gTextShadow;
+LTexture gTimeTextTexture;
 // - Sprites
 LTexture gPlaneTexture;
 LTexture gRobotTexture;

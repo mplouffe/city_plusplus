@@ -5,11 +5,13 @@
 
 #include <stdio.h>
 #include <string>
+#include <sstream>
 #include <cmath>
 
 #include "Globals.h"
 #include "LTexture.h"
 #include "Background.h"
+#include "Timer.h"
 
 // Declarations
 bool init();									// starts up SDL and creates window
@@ -120,8 +122,8 @@ bool loadMedia()
 	}
 
 	// Load Title Font
-	gFont = TTF_OpenFont("../assets/fonts/computer_pixel-7.ttf", 72);
-	if (gFont == NULL)
+	gTitleFont = TTF_OpenFont("../assets/fonts/computer_pixel-7.ttf", 72);
+	if (gTitleFont == NULL)
 	{
 		SDL_Log("Failed to load FONT. SDL_ttf Error: %s\n", TTF_GetError());
 		success = false;
@@ -131,17 +133,24 @@ bool loadMedia()
 		// Render text
 		SDL_Color textColor = {0xFF, 0xFF, 0xFF, 0xFF};
 		SDL_Color shadowColor = {0x00, 0x00, 0x00, 0xFF};
-		if (!gTextTexture.loadFromRenderedText("City++: An Urban Simulator", textColor, gRenderer, gFont))
+		if (!gTextTexture.loadFromRenderedText("City++: An Urban Simulator", textColor, gRenderer, gTitleFont))
 		{
 			SDL_Log("Failed to render text texture!\n");
 			success = false;
 		}
 
-		if (!gTextShadow.loadFromRenderedText("City++: An Urban Simulator", shadowColor, gRenderer, gFont))
+		if (!gTextShadow.loadFromRenderedText("City++: An Urban Simulator", shadowColor, gRenderer, gTitleFont))
 		{
 			SDL_Log("Failed to render text texture!\n");
 			success = false;
 		}
+	}
+
+	gTimeFont = TTF_OpenFont("../assets/fonts/computer_pixel-7.ttf", 23);
+	if (gTimeFont == NULL)
+	{
+		SDL_Log("Failed to load FONT. SDL_ttf Error: %s\n", TTF_GetError());
+		success = false;
 	}
 
 	// Load Audio
@@ -169,8 +178,8 @@ void close()
 	gSelect = NULL;
 
 	// close text
-	TTF_CloseFont(gFont);
-	gFont = NULL;
+	TTF_CloseFont(gTitleFont);
+	gTitleFont = NULL;
 
 	// close game controller
 	SDL_JoystickClose(gGameController);
@@ -208,6 +217,10 @@ int main( int argc, char* args[] )
 	// Keep window open until quit
 	SDL_Event e;
 	bool quit = false;
+
+	Timer timer;
+	std::stringstream timeText;
+	SDL_Color textColor = {255, 255, 255, 255};
 	
 	int planeXPosition = -gPlaneTexture.getWidth();
 	int planeYPositionMin = 0;
@@ -299,6 +312,25 @@ int main( int argc, char* args[] )
 						gBackground.triggerCrossFade(KeyPressSurfaces::KEY_PRESS_SURFACE_DEFAULT);
 						playSound = true;
 						break;
+					case SDLK_s:
+						if (timer.isStarted())
+						{
+							timer.stop();
+						}
+						else
+						{
+							timer.start();
+						}
+						break;
+					case SDLK_p:
+						if (timer.isPaused())
+						{
+							timer.unpause();
+						}
+						else
+						{
+							timer.pause();
+						}
 				}
 
 				if (playSound)
@@ -355,6 +387,18 @@ int main( int argc, char* args[] )
 			robotSpriteOffset.x = robotFrame * 24;
 			robotFrameCounter = 0;
 		}
+
+		// timer dispaly
+		timeText.str("");
+		timeText << "time: " << (timer.getTicks() / 1000.f);
+
+		if (!gTimeTextTexture.loadFromRenderedText(timeText.str().c_str(), textColor, gRenderer, gTimeFont))
+		{
+			SDL_Log("Unable to render time texture!\n");
+		}
+
+		gTimeTextTexture.render(10, SCREEN_HEIGHT - 30);
+
 
 		// Update Screen
 		SDL_RenderPresent(gRenderer);
