@@ -6,6 +6,8 @@
 
 const int SCREEN_WIDTH = 1024;
 const int SCREEN_HEIGHT = 768;
+const int SCREEN_FPS = 60;
+const int SCREEN_TICKS_PER_FRAME = 1000 / SCREEN_FPS;
 const int JOYSTICK_DEAD_ZONE = 8000;
 
 // Globals

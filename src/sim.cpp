@@ -218,9 +218,13 @@ int main( int argc, char* args[] )
 	SDL_Event e;
 	bool quit = false;
 
-	Timer timer;
+	Timer fpsTimer;
+	Timer capTimer;
+
 	std::stringstream timeText;
 	SDL_Color textColor = {255, 255, 255, 255};
+	int countedFrames = 0;
+	fpsTimer.start();
 	
 	int planeXPosition = -gPlaneTexture.getWidth();
 	int planeYPositionMin = 0;
@@ -242,7 +246,7 @@ int main( int argc, char* args[] )
 	gBackground.setBackground(KeyPressSurfaces::KEY_PRESS_SURFACE_DEFAULT);
 	
 	while(!quit)
-	{ 
+	{
 		while(SDL_PollEvent(&e))
 		{ 
 			if(e.type == SDL_QUIT)
@@ -312,25 +316,6 @@ int main( int argc, char* args[] )
 						gBackground.triggerCrossFade(KeyPressSurfaces::KEY_PRESS_SURFACE_DEFAULT);
 						playSound = true;
 						break;
-					case SDLK_s:
-						if (timer.isStarted())
-						{
-							timer.stop();
-						}
-						else
-						{
-							timer.start();
-						}
-						break;
-					case SDLK_p:
-						if (timer.isPaused())
-						{
-							timer.unpause();
-						}
-						else
-						{
-							timer.pause();
-						}
 				}
 
 				if (playSound)
@@ -389,8 +374,13 @@ int main( int argc, char* args[] )
 		}
 
 		// timer dispaly
+		float avgFPS = countedFrames / (fpsTimer.getTicks() / 1000.f);
+		if (avgFPS > 2000000)
+		{
+			avgFPS = 0;
+		}
 		timeText.str("");
-		timeText << "time: " << (timer.getTicks() / 1000.f);
+		timeText << "fps: " << avgFPS;
 
 		if (!gTimeTextTexture.loadFromRenderedText(timeText.str().c_str(), textColor, gRenderer, gTimeFont))
 		{
@@ -402,6 +392,7 @@ int main( int argc, char* args[] )
 
 		// Update Screen
 		SDL_RenderPresent(gRenderer);
+		++countedFrames;
 	}
 	
 	close();
