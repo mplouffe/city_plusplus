@@ -13,6 +13,10 @@
 #include "Background.h"
 #include "Timer.h"
 
+#include "Entity.h"
+#include "Transform.h"
+#include "Sprite.h"
+
 // Declarations
 bool init();									// starts up SDL and creates window
 void close();									// frees media and shuts down SDL
@@ -219,7 +223,18 @@ int main( int argc, char* args[] )
 	bool quit = false;
 
 	Timer fpsTimer;
-	Timer capTimer;
+	Entity* planeEntity = new Entity();
+	Transform* planeTransform = new Transform();
+	Sprite* planeSprite = new Sprite();
+
+	
+	planeTransform->movePosition({-planeSprite->getWidth(), 50});
+	
+
+	planeEntity->addComponent(planeTransform);
+	planeEntity->addComponent(planeSprite);
+
+	
 
 	std::stringstream timeText;
 	SDL_Color textColor = {255, 255, 255, 255};
